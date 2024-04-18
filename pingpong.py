@@ -1,4 +1,5 @@
 from pygame import *
+font.init()
 mixer.init()
 window = display.set_mode((700, 500))
 display.set_caption("пинг понг")
@@ -30,25 +31,40 @@ class Raketka(GameSprite):
 
 igrok = Raketka('red.png', 3, 0, 100, 100, 100)
 igrok_2 = Raketka('blue.png', 3, 590, 100, 100, 100)
-mach = GameSprite('mach.png', 3, 320, 230, 50, 40)
+mach = GameSprite('mach.png', 3, 320, 230, 60, 35)
 clock = time.Clock() 
 FPS = 60
 run = True
-mixer.music.load('music.ogg')
-mixer.music.play()
+finish = False
+speed_x = 4
+speed_y = -4
+font1 = font.SysFont('Verdana', 35)
+lose1 = font1.render('игрок 1 проиграл', True, (180, 0, 0))
+lose2 = font1.render('игрок 2 проиграл', True, (180, 0, 0))
 while run == True: 
     for e in event.get():
         if e.type == QUIT:
             run = False
     window.blit(ping,(0, 0))  
 
-
-
-    igrok.update_l()        
-    igrok.reset()
-    igrok_2.update_r()        
-    igrok_2.reset()
-    mach.update()
-    mach.reset()
+    if finish != True:
+        mach.rect.x += speed_x
+        mach.rect.y += speed_y
+        if mach.rect.y > 400 or mach.rect.y < 60:
+            speed_y *= -1 
+        if sprite.collide_rect(igrok, mach) or sprite.collide_rect(igrok_2, mach):
+            speed_x *= -1
+        if mach.rect.x < 0:
+            #finish = True
+            window.blit(lose1, (200, 200))
+        if mach.rect.x > 700:
+            #finish = True
+            window.blit(lose2, (200, 200))
+        igrok.update_l()
+        igrok.reset()
+        igrok_2.update_r()        
+        igrok_2.reset()
+        mach.update()
+        mach.reset()
     clock.tick(FPS)
     display.update()
